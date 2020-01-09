@@ -8,10 +8,10 @@ const data = [];
 const chartWidth = 800 - margin.left - margin.right;
 const chartHeight = 400 - margin.top - margin.bottom;
 const barPadding = 5;
-const barCount = Math.floor(d3.randomUniform(4, 30)());
+const barCount = Math.floor(d3.randomUniform(5, 30)());
 
 for (var i = 0; i < barCount; i++) {
-  data.push(Math.floor(d3.randomUniform(0, 800)()));
+  data.push(Math.floor(d3.randomUniform(1, 1200)()));
 }
 
 // Scales
@@ -20,11 +20,11 @@ var scaleX = d3.scaleLinear()
   .range([0, chartWidth]);
 
 var scaleY = d3.scaleLinear()
-  .domain([d3.min(data), d3.max(data)])
-  .range([25, chartHeight]);
+  .domain([0, d3.max(data)])
+  .range([1, chartHeight]);
 
 var scaleYInverted = d3.scaleLinear()
-  .domain([d3.min(data), d3.max(data)])
+  .domain([0, d3.max(data)])
   .range([chartHeight, 0]);
 
 // Create SVG
