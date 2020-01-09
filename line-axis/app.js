@@ -1,19 +1,19 @@
 function newData(lineCount, points) {
   return d3.range(lineCount).map(function () {
     return d3.range(points).map(function (item, index) {
-      return { x: index, y: Math.random() * 100 };
+      return { x: index, y: Math.floor(d3.randomUniform(15000, 36000)()) };
     });
   });
 }
 
-var data = newData(3, 20);
+var data = newData(3, Math.floor(d3.randomUniform(20, 50)()));
 var dataFlattened = [...data[0], ...data[1], ...data[2]];
 
 const margin = {
-  left: 100,
-  right: 20,
-  top: 20,
-  bottom: 100,
+  left: 10,
+  right: 105,
+  top: 0,
+  bottom: 40,
 };
 const chartWidth = 800 - margin.left - margin.right;
 const chartHeight = 400 - margin.top - margin.bottom;
@@ -25,6 +25,17 @@ const chartHeight = 400 - margin.top - margin.bottom;
 // data.forEach(function (e, i) {
 //   data[i].date = time_parse(e.date);
 // });
+
+// Areas
+// var area = d3.svg.area()
+//   .x(function (d) { return scaleX(d.year); })
+//   .y0(function (d) { return scaleY(d.blueValue); })
+//   .y1(function (d) { return scaleY(d.redValue); });
+
+function make_x_gridlines() {
+  return d3.axisBottom(scaleX)
+}
+
 
 // Scales
 var scaleX = d3.scaleLinear()
@@ -48,23 +59,43 @@ var svg = d3.select('#chart')
 
 // Axis
 var axisX = d3.axisBottom()
-  .scale(scaleX);
+  .scale(scaleX)
+  .tickSize(0);
 
-var axisY = d3.axisLeft()
+var axisY = d3.axisRight()
   .scale(scaleYInverted);
 
 svg.append('g')
   .call(axisX)
-  .attr('transform', 'translate(' + margin.left + ',' + (chartHeight + 30) + ')');
+  .attr("class", "axis-x")
+  .attr('transform', 'translate(' + margin.left + ',' + (chartHeight + 20) + ')');
 
 svg.append('g')
   .call(axisY)
-  .attr('transform', 'translate(' + (margin.left - 10) + ',' + margin.top + ')');
+  .attr("class", "axis-y")
+  .attr('transform', 'translate(' + (chartWidth + 30) + ',' + margin.top + ')');
+
+// Draw Background
+svg.append('rect')
+  .attr('height', chartHeight)
+  .attr('width', chartWidth)
+  .attr('fill', '#ECECEC')
+  .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+
+// Gridlines
+// add the X gridlines
+svg.append("g")
+  .attr("class", "grid-lines")
+  .attr('transform', 'translate(' + (margin.left) + ',' + (chartHeight) + ')')
+  .call(make_x_gridlines()
+    .tickSize(-chartHeight)
+    .tickSizeOuter(0)
+    .tickFormat('')
+  )
 
 // Create a group for all bars (to center)
 var group = svg.append('g')
   .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
-
 
 var lineFunc = d3.line()
   .x(function (d) { return scaleX(d.x) })
@@ -108,6 +139,4 @@ group.append('path')
 //   .attr('font-size', '15px')
 //   .attr('fill', '#ffffff')
 //   .attr('text-anchor', 'middle')
-
-
 
