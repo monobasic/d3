@@ -31,4 +31,5 @@ svg
   .attr('height', function (d) {
     return d + 'px';
   })
+  .attr('fill', '#7ED26D')
 
