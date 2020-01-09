@@ -11,20 +11,43 @@ const barPadding = 5;
 const barCount = Math.floor(d3.randomUniform(4, 30)());
 
 for (var i = 0; i < barCount; i++) {
-  data.push(Math.floor(d3.randomUniform(0, 1200)()));
+  data.push(Math.floor(d3.randomUniform(0, 800)()));
 }
 
 // Scales
+var scaleX = d3.scaleLinear()
+  .domain([0, barCount])
+  .range([0, chartWidth]);
 
 var scaleY = d3.scaleLinear()
   .domain([d3.min(data), d3.max(data)])
-  .range([25, chartHeight])
+  .range([25, chartHeight]);
+
+var scaleYInverted = d3.scaleLinear()
+  .domain([d3.min(data), d3.max(data)])
+  .range([chartHeight, 0]);
 
 // Create SVG
 var svg = d3.select('#chart')
   .append('svg')
   .attr('width', chartWidth + margin.left + margin.right)
   .attr('height', chartHeight + margin.top + margin.bottom);
+
+
+// Axis
+var axisX = d3.axisBottom()
+  .scale(scaleX);
+
+var axisY = d3.axisLeft()
+  .scale(scaleYInverted);
+
+svg.append('g')
+  .call(axisX)
+  .attr('transform', 'translate(' + margin.left + ',' + (chartHeight + 30) + ')');
+
+svg.append('g')
+  .call(axisY)
+  .attr('transform', 'translate(' + (margin.left - 10) + ',' + margin.top + ')');
 
 // Create a group for all bars (to center)
 var group = svg.append('g')
