@@ -1,30 +1,42 @@
+function newData(lineCount, points) {
+  return d3.range(lineCount).map(function () {
+    return d3.range(points).map(function (item, index) {
+      return { x: index, y: Math.random() * 100 };
+    });
+  });
+}
+
+var data = newData(3, 20);
+var dataFlattened = [...data[0], ...data[1], ...data[2]];
+
 const margin = {
   left: 100,
   right: 20,
   top: 20,
   bottom: 100,
 };
-const data = [];
 const chartWidth = 800 - margin.left - margin.right;
 const chartHeight = 400 - margin.top - margin.bottom;
-const barPadding = 5;
-const barCount = Math.floor(d3.randomUniform(5, 30)());
 
-for (var i = 0; i < barCount; i++) {
-  data.push(Math.floor(d3.randomUniform(1, 1200)()));
-}
+// var time_parse = d3.timeParse('%Y');
+// var time_format = d3.timeFormat('%Y');
+
+// // Format Dates
+// data.forEach(function (e, i) {
+//   data[i].date = time_parse(e.date);
+// });
 
 // Scales
 var scaleX = d3.scaleLinear()
-  .domain([0, barCount])
+  .domain([d3.min(dataFlattened, function (d) { return d.x; }), d3.max(dataFlattened, function (d) { return d.x; })])
   .range([0, chartWidth]);
 
 var scaleY = d3.scaleLinear()
-  .domain([0, d3.max(data)])
+  .domain([d3.min(dataFlattened, function (d) { return d.y; }), d3.max(dataFlattened, function (d) { return d.y; })])
   .range([1, chartHeight]);
 
 var scaleYInverted = d3.scaleLinear()
-  .domain([0, d3.max(data)])
+  .domain([d3.min(dataFlattened, function (d) { return d.y; }), d3.max(dataFlattened, function (d) { return d.y; })])
   .range([chartHeight, 0]);
 
 // Create SVG
@@ -53,43 +65,49 @@ svg.append('g')
 var group = svg.append('g')
   .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
 
-// Bind data and create bars
-group
-  .selectAll('rect')
-  .data(data)
-  .enter()
-  .append('rect')
-  .attr('x', function (d, i) {
-    return i * (chartWidth / data.length);
-  })
-  .attr('y', function (d) {
-    return chartHeight - scaleY(d);
-  })
-  .attr('width', chartWidth / data.length - barPadding)
-  .attr('height', function (d) {
-    return scaleY(d) + 'px';
-  })
-  .attr('fill', '#7ED26D');
+
+var lineFunc = d3.line()
+  .x(function (d) { return scaleX(d.x) })
+  .y(function (d) { return scaleYInverted(d.y) })
+
+// Bind data and create line
+group.append('path')
+  .attr('d', lineFunc(data[0]))
+  .attr('stroke', '#0093C5')
+  .attr('stroke-width', 5)
+  .attr('fill', 'none');
+
+group.append('path')
+  .attr('d', lineFunc(data[1]))
+  .attr('stroke', '#006888')
+  .attr('stroke-width', 5)
+  .attr('fill', 'none');
+
+group.append('path')
+  .attr('d', lineFunc(data[2]))
+  .attr('stroke', '#92B050')
+  .attr('stroke-width', 5)
+  .attr('fill', 'none');
 
 // Create labels
-group
-  .selectAll('text')
-  .data(data)
-  .enter()
-  .append('text')
-  .text(function (d) {
-    return d;
-  })
-  .attr('x', function (d, i) {
-    return i * (chartWidth / data.length) +
-      (chartWidth / data.length - barPadding) / 2
-  })
-  .attr('y', function (d) {
-    return chartHeight - scaleY(d) + 15;
-  })
-  .attr('font-size', '15px')
-  .attr('fill', '#ffffff')
-  .attr('text-anchor', 'middle')
+// group
+//   .selectAll('text')
+//   .data(data)
+//   .enter()
+//   .append('text')
+//   .text(function (d) {
+//     return d;
+//   })
+//   .attr('x', function (d, i) {
+//     return i * (chartWidth / data.length) +
+//       (chartWidth / data.length - barPadding) / 2
+//   })
+//   .attr('y', function (d) {
+//     return chartHeight - scaleY(d) + 15;
+//   })
+//   .attr('font-size', '15px')
+//   .attr('fill', '#ffffff')
+//   .attr('text-anchor', 'middle')
 
 
 
