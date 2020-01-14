@@ -1,9 +1,16 @@
-var pn = new Perlin('random seed');
+
+// Inputs
+var investmentStrategy;
+var timeHorizont;
+var investmentAmount = 30000;
+
+
+var pn = new Perlin(Math.random());
 
 function mockData(lineCount, points) {
   return d3.range(lineCount).map(function (current) {
     return d3.range(points).map(function (item, index) {
-      return { x: index, y: (pn.noise(index * -1 / 200, 0, 0)) * 1000 * (current * index + 100) };
+      return { x: index, y: (pn.noise(index / 100, 0, 0)) * 1000 * (current * index + 100) };
     });
   });
 }
@@ -12,6 +19,7 @@ var data = mockData(3, Math.floor(d3.randomUniform(20, 50)()));
 var dataFlattened = [...data[0], ...data[1], ...data[2]];
 
 console.log(dataFlattened);
+
 
 const margin = {
   left: 10,
